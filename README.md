@@ -1,72 +1,88 @@
-# 🎨 ProteoFigure Studio - Publication-Grade Figure Maker
+# ProteoFigure Studio - Publication-Grade Figure Maker
 
-**ProteoFigure Studio**, diferansiyel proteomik analizleri için tasarlanmış yüksek kaliteli bir görselleştirme ve yayın figürü üreticisidir.
+**ProteoFigure Studio** is a visualization and publication-quality figure generation tool designed for differential proteomics data analysis.
 
-Bu modül, serideki üç ana pipeline'ın (**Proteomics_Pipeline.Rmd**, **Ultimate_Functional_Analysis.Rmd** ve **Proteomic_Footprinting.Rmd**) ürettiği tüm veri çıktılarını doğrudan içe aktararak yalnızca klasik grafiklerle sınırlı kalmadan; zengin grafik seçenekleri, prestijli dergi renk paletleri ve tam manuel özelleştirme imkanı sunar.
-
----
-
-## 🌟 Neden ProteoFigure Studio?
-
-- **Sadece Dot Plot Değil:** Fonksiyonel zenginleştirme için **Dot Plot**, **Yatay/Dikey Barplot**, **Lollipop Chart**, **GSEA Şelale Grafiği**.
-- **Diferansiyel Ekspresyon için Zengin Seçenekler:** **Enhanced Volcano Plot** (`ggrepel` ile arama yaparak istenen proteinleri etiketleme), **Tekil Protein Boxplot / Violin**, **PCA Güven Elips Dağılımı**.
-- **Transkripsiyon Faktörleri (TF):** Çift yönlü **Diverging Barplot**, **TF Lollipop** ve skor dağılımları.
-- **Prestijli Renk Paletleri:** Nature Publishing Group (NPG), NEJM, The Lancet, JAMA, JCO, Science (AAAS), Viridis, ColorBrewer ve Özel Renk Seçiciler (Hex).
-- **Yayın Formatlarında Kaydetme:** Vektörel **PDF**, **SVG** (Illustrator uyumlu), **300 & 600 DPI PNG**, **TIFF** formatlarında tek tıkla indirme; Nature tek sütun (89 mm) ve çift sütun (183 mm) boyut önayarları.
+It seamlessly integrates outputs from proteomics analysis workflows (`Proteomics_Pipeline.Rmd`, `Ultimate_Functional_Analysis.Rmd`, and `Proteomic_Footprinting.Rmd`), providing diverse plotting options, academic journal color palettes, and full customization capabilities.
 
 ---
 
-## 🚀 Nasıl Kullanılır?
+## Key Features
 
-### 1. Yöntem: İnteraktif Arayüz (Shiny App) - Tavsiye Edilen 🖥️
+- **Functional Enrichment Plots:** Dot Plot, Horizontal/Vertical Barplot, Lollipop Chart, and GSEA Waterfall plot.
+- **Differential Expression Visualizations:** Enhanced Volcano Plot (custom gene labeling with `ggrepel`), Individual Protein Boxplots / Violin Plots, and PCA with confidence ellipses.
+- **Transcription Factor (TF) Dynamics:** Diverging Barplots, TF Lollipops, and activity score distributions.
+- **Journal-Grade Palettes:** Nature Publishing Group (NPG), NEJM, The Lancet, JAMA, JCO, Science (AAAS), Viridis, ColorBrewer, and custom HEX color pickers.
+- **Publication-Ready Exports:** Vector formats (PDF, SVG for Adobe Illustrator), high-resolution raster images (300 & 600 DPI PNG, TIFF), with Nature single-column (89 mm) and double-column (183 mm) dimension presets.
 
-Uygulamayı başlatmak için RStudio veya R konsolunda aşağıdaki komutu çalıştırmanız yeterlidir:
+---
 
-```r
-source("c:/Users/serife-ayaz/Desktop/Differential_Proteomics_Pipeline/Figure_Maker/run_figure_maker.R")
-```
+## Usage
 
-Veya `In_Silico_Protocols` projesindeyseniz:
+### 1. Interactive Interface (Shiny App) - Recommended
+
+Launch the interactive application using RStudio or the R console:
+
 ```r
 source("run_figure_maker.R")
 ```
 
-Açılan modern arayüzde:
-1. Sonuç klasörünüzü (`OMV_Treatment_Sec` vb.) seçin veya dosyanızı yükleyin.
-2. Grafik türünü, metrikleri (GeneRatio, Count, FoldEnrichment) ve paleti belirleyin.
-3. Canlı önizlemede grafiğinizi inceleyin.
-4. "Download Figure" butonuna basarak dergi formatında çıktınızı alın!
+Or run `app.R` directly:
+```r
+shiny::runApp()
+```
 
-### 2. Yöntem: RMarkdown / Script İçinde Kodla Kullanım 📝
+Workflow:
+1. Select your results directory or upload analysis tables.
+2. Choose your plot type, metrics (GeneRatio, Count, FoldEnrichment), and color palette.
+3. Inspect the live preview and adjust dimensions.
+4. Export publication-ready figures.
 
-Arayüz kullanmak istemiyorsanız, doğrudan `figure_maker_engine.R` fonksiyonlarını projenize çağırabilirsiniz:
+### 2. Programmatic Usage in RMarkdown / Scripts
+
+Call functions from `figure_maker_engine.R` directly in your R workflows:
 
 ```r
 source("figure_maker_engine.R")
 
-# 1. Zenginleştirme Dot Plot
+# 1. Enrichment Dot Plot
 df_go <- read.csv("Ultimate_GO_BP_Enriched_Young_OMV_vs_Young_Control.csv")
 p_dot <- plot_enrichment_dot(df_go, x_metric = "GeneRatio", color_metric = "p.adjust", top_n = 15)
 
-# 2. Volcano Plot (Özel Gen Etiketleriyle)
+# 2. Volcano Plot with Custom Gene Labels
 df_dea <- read.csv("all_proteins_Young_OMV_vs_Young_Control.csv")
 p_volc <- plot_volcano(df_dea, selected_genes = c("IL6", "C3", "CASP3"), label_type = "custom")
 
-# 3. Yüksek Kalitede PDF Kaydet
+# 3. Export High-Resolution Figure
 export_figure(p_dot, file_path = "Figure1.pdf", format = "pdf", width = 7.2, height = 6.0)
 ```
 
-Detaylı örnek kodlar ve çıktılar için [Figure_Maker_Tutorial.Rmd](Figure_Maker_Tutorial.Rmd) dosyasına göz atabilirsiniz.
+For detailed examples and tutorials, see [Figure_Maker_Tutorial.Rmd](Figure_Maker_Tutorial.Rmd).
 
 ---
 
-## 📁 Dosya Yapısı
+## 📁 Repository Structure
 
 ```text
-Figure_Maker/
-├── app.R                     # İnteraktif Shiny App
-├── figure_maker_engine.R     # Çekirdek modüler grafik fonksiyonları motoru
-├── run_figure_maker.R        # Tek tıklamayla başlatıcı script
-├── Figure_Maker_Tutorial.Rmd # Kodla çalışan RMarkdown kılavuzu
-└── README.md                 # Bu dokümantasyon
+Proteomics Figure Maker/
+├── app.R                     # Interactive Shiny Application
+├── figure_maker_engine.R     # Core modular plotting functions engine
+├── run_figure_maker.R        # Application launcher script
+├── Figure_Maker_Tutorial.Rmd # Step-by-step tutorial notebook
+├── LICENSE                   # MIT License
+└── README.md                 # Project documentation
 ```
+
+---
+
+## Prerequisites
+
+Required packages:
+`shiny`, `bslib`, `DT`, `ggplot2`, `dplyr`, `tidyr`, `stringr`, `scales`, `ggrepel`, `ggsci`, `viridis`, `RColorBrewer`, `svglite`
+
+Missing packages will be installed automatically when executing `run_figure_maker.R`.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
