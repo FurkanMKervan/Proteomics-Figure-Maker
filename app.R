@@ -58,10 +58,7 @@ app_theme <- bs_theme(
 # ------------------------------------------------------------------------------
 
 ui <- page_navbar(
-  title = div(
-    span(style = "font-weight: 800; color: #ffffff; font-size: 1.25rem; letter-spacing: -0.5px;", "ProteoPrism"),
-    span(style = "font-size: 0.85rem; color: #18bc9c; margin-left: 10px; font-weight: 600;", "Publication Figure Maker")
-  ),
+  title = span(style = "font-weight: 800; color: #ffffff; font-size: 1.25rem; letter-spacing: -0.5px;", "ProteoPrism"),
   theme = app_theme,
   bg = "#2c3e50",
   fillable = FALSE,
