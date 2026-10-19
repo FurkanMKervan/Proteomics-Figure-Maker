@@ -1,6 +1,6 @@
-# ProteoFigure Studio - Publication-Grade Figure Maker
+# ProteoPrism - Publication-Grade Figure Maker
 
-**ProteoFigure Studio** is a visualization and publication-quality figure generation tool designed for differential proteomics data analysis.
+**ProteoPrism** is a visualization and publication-quality figure generation tool designed for differential proteomics data analysis.
 
 It seamlessly integrates outputs from proteomics analysis workflows (`Proteomics_Pipeline.Rmd`, `Ultimate_Functional_Analysis.Rmd`, and `Proteomic_Footprinting.Rmd`), providing diverse plotting options, academic journal color palettes, and full customization capabilities.
 

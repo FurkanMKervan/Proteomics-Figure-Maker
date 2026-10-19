@@ -1,5 +1,5 @@
 # ==============================================================================
-# ProteoFigure Studio - Publication-Grade Figure Maker for Differential Proteomics
+# ProteoPrism - Publication-Grade Figure Maker for Differential Proteomics
 # High-End Visualization Suite for Modules 1, 2, and 3
 # ==============================================================================
 
@@ -44,11 +44,11 @@ DEFAULT_DATA_DIR <- "c:/Users/serife-ayaz/Desktop/OMV_Treatment_Sec"
 app_theme <- bs_theme(
   version = 5,
   bootswatch = "flatly",
-  primary = "#3C5488",
-  secondary = "#8491B4",
-  success = "#00A087",
-  danger = "#E64B35",
-  info = "#4DBBD5",
+  primary = "#2c3e50",
+  secondary = "#18bc9c",
+  success = "#18bc9c",
+  danger = "#e74c3c",
+  info = "#3498db",
   base_font = font_google("Inter"),
   heading_font = font_google("Inter")
 )
@@ -59,10 +59,11 @@ app_theme <- bs_theme(
 
 ui <- page_navbar(
   title = div(
-    span(style = "font-weight: 800; color: #3C5488; font-size: 1.25rem;", "🎨 ProteoFigure Studio"),
-    span(style = "font-size: 0.85rem; color: #6c757d; margin-left: 10px;", "Publication Figure Maker")
+    span(style = "font-weight: 800; color: #ffffff; font-size: 1.25rem; letter-spacing: -0.5px;", "ProteoPrism"),
+    span(style = "font-size: 0.85rem; color: #18bc9c; margin-left: 10px; font-weight: 600;", "Publication Figure Maker")
   ),
   theme = app_theme,
+  bg = "#2c3e50",
   fillable = FALSE,
 
   # TAB 1: FIGURE MAKER STUDIO
