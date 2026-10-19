@@ -1,0 +1,265 @@
+---
+title: "ProteoFigure Studio - Publication Figure Maker Tutorial"
+author: "Differential Proteomics Pipeline Suite"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  dpi = 300
+)
+
+# Load engine functions
+source("figure_maker_engine.R")
+```
+
+# Giriş ve Amaç 🎯
+
+Bu kılavuz, `Differential_Proteomics_Pipeline` projesinde yer alan üç ana pipeline'ın (**Proteomics_Pipeline**, **Ultimate_Functional_Analysis**, **Proteomic_Footprinting**) ürettiği sonuç tablolarını kullanarak makale kalitesinde (**Nature, Cell, Science** standartlarında) özel figürler oluşturmayı gösterir.
+
+Grafikleri ister **interaktif Shiny App** (`run_figure_maker.R`) üzerinden fareyle tıklayarak yapabilir, isterseniz bu RMarkdown dosyasında olduğu gibi kodla dilediğiniz gibi özelleştirebilirsiniz.
+
+---
+
+# 1. Modül 2: Fonksiyonel Zenginleştirme Figürleri (GO & Pathways) 🧬
+
+`Ultimate_Functional_Analysis.Rmd` tarafından üretilen `Ultimate_GO_BP_*.csv`, `Ultimate_GO_CC_*.csv`, `Ultimate_GO_MF_*.csv` veya KEGG/Reactome dosyalarını görselleştirir.
+
+## 1.1. Gelişmiş Dot Plot (Dotplot)
+
+Standart dotplot'un ötesinde X eksenini (`GeneRatio`, `FoldEnrichment`, `RichFactor`, `Count`), renkleri ve metin kaydırma genişliğini serbestçe belirleyebilirsiniz.
+
+```{r dotplot_example}
+# Örnek OMV Verisi
+go_file <- "c:/Users/serife-ayaz/Desktop/OMV_Treatment_Sec/Ultimate_GO_BP_Enriched_Young_OMV_vs_Young_Control.csv"
+if (file.exists(go_file)) {
+  df_go <- read.csv(go_file)
+} else {
+  # Demo veri
+  df_go <- data.frame(
+    Description = c("innate immune response", "defense response", "immune system process", 
+                    "response to external stimulus", "leukocyte homeostasis", "proteolysis"),
+    GeneRatio = c("19/77", "25/77", "30/77", "29/77", "6/77", "16/77"),
+    Count = c(19, 25, 30, 29, 6, 16),
+    FoldEnrichment = c(2.33, 2.00, 1.70, 1.71, 4.28, 2.19),
+    p.adjust = c(0.0001, 0.00015, 0.0004, 0.0005, 0.0008, 0.0012)
+  )
+}
+
+p_dot <- plot_enrichment_dot(
+  df = df_go,
+  x_metric = "GeneRatio",          # "GeneRatio", "FoldEnrichment", "RichFactor", "Count"
+  color_metric = "p.adjust",       # Renk metriği
+  top_n = 12,                      # Gösterilecek terim sayısı
+  wrap_length = 40,                # Yazıların taşmaması için satır genişliği
+  palette_type = "gradient",
+  gradient_low = "#E64B35",        # En anlamlı (düşük p-val) için kırmızı
+  gradient_high = "#3C5488",       # Yüksek p-val için lacivert
+  title = "Young OMV vs Control: GO Biological Processes",
+  theme_name = "classic"           # "classic", "minimal", "bw", "prism"
+)
+
+print(p_dot)
+```
+
+## 1.2. Zenginleştirme Çubuk Grafiği (Barplot)
+
+```{r barplot_example}
+p_bar <- plot_enrichment_bar(
+  df = df_go,
+  x_metric = "Count",
+  color_metric = "p.adjust",
+  top_n = 10,
+  palette_type = "gradient",
+  gradient_low = "#E64B35",
+  gradient_high = "#3C5488",
+  title = "Enriched Pathways (Gene Count)",
+  theme_name = "prism"             # GraphPad Prism stili eksenler
+)
+
+print(p_bar)
+```
+
+## 1.3. Modern Şık Lollipop Grafiği
+
+```{r lollipop_example}
+p_lolli <- plot_enrichment_lollipop(
+  df = df_go,
+  x_metric = "Count",
+  color_metric = "p.adjust",
+  top_n = 12,
+  point_size = 5,
+  title = "Pathway Enrichment Lollipop Chart",
+  theme_name = "classic"
+)
+
+print(p_lolli)
+```
+
+## 1.4. GSEA Çift Yönlü (Diverging) Lollipop Grafiği (P-Value Etiketli) 🍭
+
+Pozitif ve negatif NES değerlerini şık bir lollipop grafiği ile gösterir, her noktanın yanına p-value / FDR değerini otomatik yazar ve istenmeyen terimleri filtreleyip grafikten çıkarabilir:
+
+```{r gsea_lollipop_example}
+gsea_file <- "c:/Users/serife-ayaz/Desktop/OMV_Treatment_Sec/Ultimate_GSEA_MSigDB_Hallmark_Young_OMV_vs_Young_Control.csv"
+if (file.exists(gsea_file)) {
+  df_gsea <- read.csv(gsea_file)
+  
+  p_gsea <- plot_gsea_diverging(
+    df = df_gsea,
+    top_n = 8,                         # Üst 8 pozitif ve 8 negatif yolak
+    show_p_labels = TRUE,              # Noktaların yanına FDR/p-value yaz
+    p_label_type = "fdr",              # "fdr", "pval", "stars", "both"
+    selected_terms = c("Coagulation"), # İstenmeyen terimi çıkar
+    filter_mode = "exclude",           # "exclude" (çıkar) veya "include"
+    up_color = "#E64B35",
+    down_color = "#3C5488",
+    title = "Hallmark GSEA Diverging NES (with FDR Annotations)"
+  )
+  
+  print(p_gsea)
+}
+```
+
+---
+
+# 2. Modül 1: Diferansiyel Ekspresyon & Kantitatif Figürler 🌋
+
+`Proteomics_Pipeline.Rmd` tarafından üretilen `all_proteins_*.csv` veya `DEA_*.csv` dosyalarını görselleştirir.
+
+## 2.1. Enhanced Volcano Plot (Kişiselleştirilmiş Volkan Grafiği)
+
+Eşik çizgileri, en yüksek Fold Change'e sahip (FC Max) veya en anlamlı genleri otomatik etiketleme (`ggrepel`), özel gen seçimi ve yayın kalitesinde renkler:
+
+```{r volcano_example}
+dea_file <- "c:/Users/serife-ayaz/Desktop/OMV_Treatment_Sec/all_proteins_Young_OMV_vs_Young_Control.csv"
+if (file.exists(dea_file)) {
+  df_dea <- read.csv(dea_file)
+  
+  # Örnek 1: En yüksek Fold Change (FC Max) değerine sahip en belirgin 10 geni etiketleme
+  p_volc <- plot_volcano(
+    df = df_dea,
+    p_val_type = "adj.P.Val",
+    fc_cutoff = 1.0,               # log2FC eşiği (2 kat değişim)
+    p_cutoff = 0.05,               # %5 FDR eşiği
+    top_n_labels = 10,             # Her iki taraf için en yüksek FC'ye sahip 10'ar gen
+    label_type = "top_fc",         # "top_fc" (FC Max), "top_p" (Significance), "top_combined" veya "custom"
+    label_distribution = "per_side", # "per_side" (10 Up + 10 Down) veya "overall" (genel en yüksek 10)
+    only_sig_labels = TRUE,        # Sadece eşikleri geçen anlamlı genleri etiketle
+    label_size = 3.5,
+    up_color = "#E64B35",          # Nature kırmızı
+    down_color = "#3C5488",        # Nature lacivert
+    ns_color = "#B09C85",          # Nötr kum rengi
+    symmetric_x = TRUE,
+    title = "Proteome Volcano Plot: Top 10 Max FC (Young OMV vs Young Control)",
+    theme_name = "classic"
+  )
+  
+  print(p_volc)
+}
+```
+
+## 2.2. Tekil Protein İfade Kutu Grafiği (Boxplot / Violin)
+
+İstediğiniz tek bir proteini seçip (`HSP90B1`, `EEF1A1`, `PSMB3` vb.) örnek grupları arasındaki yoğunluğunu görüntüleyin:
+
+```{r protein_box_example}
+if (file.exists(dea_file)) {
+  p_box <- plot_protein_abundance(
+    df = df_dea,
+    gene_name = "PSMB3",
+    plot_type = "boxplot",         # "boxplot" veya "violin"
+    palette = "NPG",
+    title = "PSMB3 Abundance Across Replicates",
+    theme_name = "classic"
+  )
+  
+  print(p_box)
+}
+```
+
+## 2.3. PCA (Temel Bileşen Analizi) Dağılım Grafiği
+
+```{r pca_example}
+if (file.exists(dea_file)) {
+  p_pca <- plot_pca(
+    df = df_dea,
+    palette = "NPG",
+    show_labels = TRUE,
+    show_ellipse = TRUE,
+    title = "Principal Component Analysis (PCA)",
+    theme_name = "classic"
+  )
+  
+  print(p_pca)
+}
+```
+
+---
+
+# 3. Modül 3: Transkripsiyon Faktörü (TF) Ayak İzi Figürleri 🧬
+
+`Proteomic_Footprinting.Rmd` tarafından üretilen `DoRothEA_TF_Activities_*.csv` dosyalarını görselleştirir.
+
+## 3.1. Çift Yönlü TF Aktivite Çubuk Grafiği (Diverging Barplot)
+
+```{r tf_barplot_example}
+tf_file <- "c:/Users/serife-ayaz/Desktop/OMV_Treatment_Sec/DoRothEA_TF_Activities_Young_OMV_vs_Young_Control.csv"
+if (file.exists(tf_file)) {
+  df_tf <- read.csv(tf_file)
+  
+  p_tf <- plot_tf_barplot(
+    df = df_tf,
+    top_n = 10,
+    act_color = "#E64B35",
+    rep_color = "#3C5488",
+    orientation = "horizontal",
+    title = "Inferred TF Activities (DoRothEA / decoupleR)",
+    theme_name = "classic"
+  )
+  
+  print(p_tf)
+}
+```
+
+## 3.2. TF Lollipop Grafiği
+
+```{r tf_lollipop_example}
+if (file.exists(tf_file)) {
+  p_tf_lolli <- plot_tf_lollipop(
+    df = df_tf,
+    top_n = 10,
+    act_color = "#E64B35",
+    rep_color = "#3C5488",
+    title = "Top Regulatory Transcription Factors",
+    theme_name = "classic"
+  )
+  
+  print(p_tf_lolli)
+}
+```
+
+---
+
+# 4. Dergi Standartlarında Dışa Aktarma (Export) 💾
+
+Oluşturduğunuz herhangi bir grafiği tek satırla **PDF (vektörel)**, **SVG** veya **300/600 DPI PNG** olarak kaydedebilirsiniz:
+
+```{r export_example, eval=FALSE}
+# Nature tek sütun (3.5 inç / 89 mm)
+export_figure(p_dot, file_path = "Figure1_Dotplot.pdf", format = "pdf", width = 7.2, height = 6.0)
+
+# 600 DPI yüksek çözünürlüklü PNG
+export_figure(p_volc, file_path = "Figure2_Volcano_HighRes.png", format = "png", dpi = 600, width = 6.5, height = 5.5)
+```
