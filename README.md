@@ -2,6 +2,8 @@
 
 **ProteoPrism** is a visualization and publication-quality figure generation tool designed for differential proteomics data analysis.
 
+**Live Web Application:** [https://saglab.shinyapps.io/ProteoPrism/](https://saglab.shinyapps.io/ProteoPrism/)
+
 It seamlessly integrates outputs from proteomics analysis workflows (`Proteomics_Pipeline.Rmd`, `Ultimate_Functional_Analysis.Rmd`, and `Proteomic_Footprinting.Rmd`), providing diverse plotting options, academic journal color palettes, and full customization capabilities.
 
 ---
@@ -18,9 +20,14 @@ It seamlessly integrates outputs from proteomics analysis workflows (`Proteomics
 
 ## Usage
 
-### 1. Interactive Interface (Shiny App) - Recommended
+### 1. Web Application (Cloud - No Installation Required)
 
-Launch the interactive application using RStudio or the R console:
+Access the live cloud instance directly from your browser:
+- **URL:** [https://saglab.shinyapps.io/ProteoPrism/](https://saglab.shinyapps.io/ProteoPrism/)
+
+### 2. Local Interactive Interface (RStudio)
+
+Launch the interactive application locally using RStudio or the R console:
 
 ```r
 source("run_figure_maker.R")
