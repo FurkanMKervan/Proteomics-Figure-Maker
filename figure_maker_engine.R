@@ -1,5 +1,5 @@
 # ==============================================================================
-# ProteoFigure Studio - Core Plotting Engine
+# ProteoPrism - Core Plotting Engine
 # High-Quality, Publication-Ready Visualization Functions for Differential Proteomics
 # Compatible with outputs from:
 # 1. Proteomics_Pipeline.Rmd (DEA, Quant, PCA, Heatmaps, Boxplots)

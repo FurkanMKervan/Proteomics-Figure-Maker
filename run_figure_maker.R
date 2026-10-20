@@ -1,5 +1,5 @@
 # ==============================================================================
-# ProteoFigure Studio Launcher
+# ProteoPrism Launcher
 # Double click or run in RStudio / Console to launch the application
 # ==============================================================================
 
@@ -37,5 +37,5 @@ app_dir <- tryCatch({
   return(getwd())
 })
 
-message("Starting ProteoFigure Studio from: ", app_dir)
+message("Starting ProteoPrism from: ", app_dir)
 shiny::runApp(app_dir, launch.browser = TRUE)

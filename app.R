@@ -93,13 +93,13 @@ ui <- page_navbar(
               textInput("folder_path", "Results Folder Path:", value = DEFAULT_DATA_DIR),
               actionButton("scan_folder_btn", "🔄 Scan / Refresh Files", class = "btn-sm btn-outline-primary mb-2"),
               selectInput("folder_file_select", "Select Output File:", choices = NULL),
-              fileInput("folder_design_file_upload", "🏷️ Özel Design Dosyası (İsteğe Bağlı, design.txt / .csv):", accept = c(".txt", ".tsv", ".csv"))
+              fileInput("folder_design_file_upload", "🏷️ Custom Design File (Optional, design.txt / .csv):", accept = c(".txt", ".tsv", ".csv"))
             ),
 
             conditionalPanel(
               condition = "input.data_input_mode == 'upload'",
               fileInput("uploaded_file", "Upload Expression / DEA File (.csv, .tsv, .xlsx):", accept = c(".csv", ".tsv", ".txt", ".xlsx")),
-              fileInput("design_file_upload", "🏷️ Design / Gruplandırma Dosyası (İsteğe Bağlı, design.txt / .csv):", accept = c(".txt", ".tsv", ".csv"))
+              fileInput("design_file_upload", "🏷️ Design / Grouping File (Optional, design.txt / .csv):", accept = c(".txt", ".tsv", ".csv"))
             ),
 
             conditionalPanel(
@@ -139,13 +139,13 @@ ui <- page_navbar(
 
               # EXCLUDE / INCLUDE TERM FILTER
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("🔍 Terim Filtreleme (Filter Terms):"),
+                tags$b("🔍 Term Filtering:"),
                 radioButtons(
                   "enrich_filter_mode",
                   label = NULL,
                   choices = c(
-                    "❌ Seçilenleri Grafikten Çıkar (Exclude)" = "exclude",
-                    "🎯 Sadece Seçilenleri Göster (Include Only)" = "include"
+                    "❌ Exclude Selected Terms" = "exclude",
+                    "🎯 Include Selected Terms Only" = "include"
                   ),
                   selected = "exclude"
                 ),
@@ -154,24 +154,24 @@ ui <- page_navbar(
                   label = NULL,
                   choices = NULL,
                   multiple = TRUE,
-                  options = list(placeholder = "Grafikten çıkarmak veya seçmek istediğiniz terimler...")
+                  options = list(placeholder = "Search and select terms to filter...")
                 )
               ),
 
               # P-VALUE STABILITY & ANNOTATIONS
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("⚖️ P-Value & Renk Ölçeği Dengesi:"),
+                tags$b("⚖️ P-Value & Color Scale Calibration:"),
                 selectInput(
                   "color_scale_limits_mode",
-                  "Renk Skalası Limitleri (Color Stability):",
+                  "Color Scale Limits (Color Stability):",
                   choices = c(
-                    "Sabit Tam Veri Seti (Renkler hiç kaymaz)" = "full_data",
-                    "Dinamik (Sadece çizilen terimler)" = "dynamic",
-                    "Standart Anlamlılık (0 ile 0.05 arası)" = "standard_0_05"
+                    "Full Dataset Range (Fixed Limits)" = "full_data",
+                    "Dynamic (Displayed Terms Only)" = "dynamic",
+                    "Standard Significance (0 to 0.05)" = "standard_0_05"
                   ),
                   selected = "full_data"
                 ),
-                checkboxInput("enrich_show_p_text", "Nokta/Çubuk Yanında P-Value Değerini Yaz", value = FALSE)
+                checkboxInput("enrich_show_p_text", "Display P-Value Values Beside Points / Bars", value = FALSE)
               )
             ),
 
@@ -182,13 +182,13 @@ ui <- page_navbar(
               sliderInput("gsea_wrap", "Description Wrap Width:", min = 25, max = 80, value = 45, step = 5),
 
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("🔍 Terim Filtreleme (Filter Terms):"),
+                tags$b("🔍 Term Filtering:"),
                 radioButtons(
                   "gsea_filter_mode",
                   label = NULL,
                   choices = c(
-                    "❌ Seçilenleri Grafikten Çıkar (Exclude)" = "exclude",
-                    "🎯 Sadece Seçilenleri Göster (Include Only)" = "include"
+                    "❌ Exclude Selected Terms" = "exclude",
+                    "🎯 Include Selected Terms Only" = "include"
                   ),
                   selected = "exclude"
                 ),
@@ -197,19 +197,19 @@ ui <- page_navbar(
                   label = NULL,
                   choices = NULL,
                   multiple = TRUE,
-                  options = list(placeholder = "Grafikten çıkarmak istediğiniz terimleri seçin...")
+                  options = list(placeholder = "Search and select terms to filter...")
                 )
               ),
 
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("🎨 Renklendirme & Üst Başlıklar:"),
+                tags$b("🎨 Colors & Banner Headers:"),
                 selectInput(
                   "gsea_color_by",
-                  "Nokta Rengi (Color By):",
+                  "Point Color (Color By):",
                   choices = c(
-                    "FDR / p.adjust (Anlamlılığa göre)" = "fdr",
-                    "Ham p-value" = "pvalue",
-                    "Regülasyon Durumu (Activated / Suppressed)" = "status"
+                    "FDR / p.adjust (Significance)" = "fdr",
+                    "Raw p-value" = "pvalue",
+                    "Regulation Status (Activated / Suppressed)" = "status"
                   ),
                   selected = "fdr"
                 ),
@@ -217,24 +217,24 @@ ui <- page_navbar(
                   condition = "input.gsea_color_by == 'fdr' || input.gsea_color_by == 'pvalue'",
                   selectInput(
                     "gsea_palette_choice",
-                    "FDR / p-value Renk Skalası:",
+                    "FDR / p-value Color Scale:",
                     choices = c(
-                      "Kırmızı (Anlamlı) - Açık Gri (Anlamsız)" = "red_grey",
-                      "Viridis (Mor - Yeşil - Sarı)" = "viridis",
-                      "Plasma (Koyu Mor - Turuncu - Sarı)" = "plasma",
-                      "Kırmızı - Lacivert Gradyan" = "red_blue",
-                      "YlOrRd (Sarı - Turuncu - Kırmızı)" = "ylorrd"
+                      "Red (Significant) - Light Grey (Non-Sig)" = "red_grey",
+                      "Viridis (Purple - Green - Yellow)" = "viridis",
+                      "Plasma (Dark Purple - Orange - Yellow)" = "plasma",
+                      "Red - Navy Blue Gradient" = "red_blue",
+                      "YlOrRd (Yellow - Orange - Red)" = "ylorrd"
                     ),
                     selected = "red_grey"
                   )
                 ),
-                checkboxInput("gsea_show_top_headers", "Grafiğin Üstünde 'Activated' ve 'Suppressed' Yazsın", value = TRUE),
+                checkboxInput("gsea_show_top_headers", "Show 'Activated' and 'Suppressed' Top Headers", value = TRUE),
                 conditionalPanel(
                   condition = "input.gsea_show_top_headers == true",
                   radioButtons(
                     "gsea_header_style",
-                    "Üst Başlık Stili:",
-                    choices = c("Şık Kutu / Banner (◄ Suppressed | Activated ►)" = "banner", "Sade Metin" = "text"),
+                    "Header Style:",
+                    choices = c("Banner Box (◄ Suppressed | Activated ►)" = "banner", "Simple Text" = "text"),
                     selected = "banner",
                     inline = TRUE
                   )
@@ -242,24 +242,24 @@ ui <- page_navbar(
               ),
 
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("🏷️ P-Value Yazı Etiketleri (Lollipop):"),
-                checkboxInput("gsea_show_p_labels", "Lollipop Noktalarının Yanına P-Value Yaz", value = TRUE),
+                tags$b("🏷️ P-Value Labels (Lollipop):"),
+                checkboxInput("gsea_show_p_labels", "Display P-Value Labels Beside Points", value = TRUE),
                 conditionalPanel(
                   condition = "input.gsea_show_p_labels == true",
                   selectInput(
                     "gsea_p_label_type",
-                    "Yazılacak P-Value Formatı:",
+                    "P-Value Format:",
                     choices = c(
-                      "FDR / p.adjust (ör. FDR=0.012)" = "fdr",
-                      "Ham p-value (ör. p=0.003)" = "pval",
-                      "Yıldız İşaretleri (*, **, ***)" = "stars",
-                      "Her İkisi (p ve FDR)" = "both"
+                      "FDR / p.adjust (e.g., FDR=0.012)" = "fdr",
+                      "Raw p-value (e.g., p=0.003)" = "pval",
+                      "Significance Stars (*, **, ***)" = "stars",
+                      "Both (p and FDR)" = "both"
                     ),
                     selected = "fdr"
                   ),
-                  sliderInput("gsea_p_label_size", "Yazı Boyutu:", min = 2.5, max = 5.0, value = 3.5, step = 0.2)
+                  sliderInput("gsea_p_label_size", "Label Font Size:", min = 2.5, max = 5.0, value = 3.5, step = 0.2)
                 ),
-                checkboxInput("gsea_size_by_set", "Nokta Boyutunu Gen Sayısına (SetSize) Bağla", value = TRUE)
+                checkboxInput("gsea_size_by_set", "Scale Point Size by Gene Set Size (setSize)", value = TRUE)
               )
             ),
 
@@ -271,34 +271,34 @@ ui <- page_navbar(
                 column(6, numericInput("volcano_fc_cutoff", "log2FC Cutoff:", value = 1.0, min = 0.1, max = 5.0, step = 0.1)),
                 column(6, numericInput("volcano_p_cutoff", "P Cutoff:", value = 0.05, min = 0.0001, max = 0.2, step = 0.01))
               ),
-              radioButtons("volcano_label_mode", "Gene Labeling Mode / Etiketleme Kriteri:",
+              radioButtons("volcano_label_mode", "Gene Labeling Mode:",
                            choices = c(
-                             "🔥 Top N by Max Fold Change (FC Max)" = "top_fc",
-                             "⭐ Top N by Significance (P-value / FDR)" = "top_p",
-                             "⚡ Top N Combined (|logFC| × -log10 P)" = "top_combined",
-                             "🎯 Custom Selected Genes (Özel Seçim)" = "custom",
-                             "Yok (Etiketsiz)" = "none"
+                             "Top N by Max Fold Change (FC Max)" = "top_fc",
+                             "Top N by Significance (P-value / FDR)" = "top_p",
+                             "Top N Combined (|logFC| × -log10 P)" = "top_combined",
+                             "Custom Selected Genes" = "custom",
+                             "None (Unlabeled)" = "none"
                            ),
                            selected = "top_fc"),
               conditionalPanel(
                 condition = "input.volcano_label_mode == 'top_fc' || input.volcano_label_mode == 'top_p' || input.volcano_label_mode == 'top_combined' || input.volcano_label_mode == 'top_n'",
                 fluidRow(
-                  column(7, sliderInput("volcano_top_labels", "Top N Etiket Sayısı:", min = 1, max = 30, value = 10, step = 1)),
-                  column(5, radioButtons("volcano_balance_mode", "Etiket Dağılımı:",
+                  column(7, sliderInput("volcano_top_labels", "Number of Top Labels (N):", min = 1, max = 30, value = 10, step = 1)),
+                  column(5, radioButtons("volcano_balance_mode", "Label Distribution:",
                                          choices = c(
-                                           "Her İki Taraf (Up & Down)" = "per_side",
-                                           "Genel En Yüksek (|FC|)" = "overall"
+                                           "Both Sides (Up & Down)" = "per_side",
+                                           "Overall Highest (|FC|)" = "overall"
                                          ),
                                          selected = "per_side"))
                 ),
-                checkboxInput("volcano_sig_only", "Sadece Anlamlı Genleri Etiketle (Eşikleri Geçenler)", value = TRUE)
+                checkboxInput("volcano_sig_only", "Label Significant Genes Only (Exceeding Cutoffs)", value = TRUE)
               ),
               conditionalPanel(
                 condition = "input.volcano_label_mode == 'custom'",
-                selectizeInput("volcano_custom_genes", "Genes to Label (Etiketlenecek Genler):", choices = NULL, multiple = TRUE, options = list(placeholder = "Search and pick genes..."))
+                selectizeInput("volcano_custom_genes", "Genes to Label:", choices = NULL, multiple = TRUE, options = list(placeholder = "Search and pick genes..."))
               ),
               fluidRow(
-                column(6, sliderInput("volcano_label_size", "Etiket Yazı Boyutu:", min = 2.0, max = 6.0, value = 3.5, step = 0.2)),
+                column(6, sliderInput("volcano_label_size", "Label Font Size:", min = 2.0, max = 6.0, value = 3.5, step = 0.2)),
                 column(6, sliderInput("volcano_point_size", "Point Size:", min = 1, max = 5, value = 2.2, step = 0.2))
               ),
               sliderInput("volcano_alpha", "Point Opacity (Alpha):", min = 0.2, max = 1.0, value = 0.75, step = 0.05),
@@ -309,20 +309,20 @@ ui <- page_navbar(
             # Sub-controls for Protein Abundance
             conditionalPanel(
               condition = "input.selected_plot_type == 'protein_box'",
-              selectizeInput("target_gene_select", "Select Protein / Gene (Protein veya Gen Seçin):", choices = NULL, options = list(placeholder = "Search gene name or protein ID...")),
-              radioButtons("box_style", "Plot Style / Grafik Tipi:",
+              selectizeInput("target_gene_select", "Select Protein / Gene:", choices = NULL, options = list(placeholder = "Search gene name or protein ID...")),
+              radioButtons("box_style", "Plot Style:",
                            choices = c(
-                             "📈 Profile Plot (Örnek Bazlı Çizgi)" = "profile_samples",
-                             "📈 Profile Plot (Grup Ortalaması: Mean ± SEM)" = "profile_group",
-                             "📦 Boxplot + Jitter" = "boxplot"
+                             "Profile Plot (Sample-Level Lines)" = "profile_samples",
+                             "Profile Plot (Group Mean ± SEM)" = "profile_group",
+                             "Boxplot + Jitter" = "boxplot"
                            ),
                            selected = "profile_samples",
                            inline = FALSE),
               conditionalPanel(
                 condition = "input.box_style == 'profile_group' || input.box_style == 'profile_samples'",
                 fluidRow(
-                  column(6, checkboxInput("profile_show_line", "Ortalamaları Çizgiyle Birleştir", value = TRUE)),
-                  column(6, checkboxInput("profile_show_points", "Bireysel Örnek Noktalarını Göster (Jitter)", value = TRUE))
+                  column(6, checkboxInput("profile_show_line", "Connect Means with Line", value = TRUE)),
+                  column(6, checkboxInput("profile_show_points", "Show Individual Sample Points (Jitter)", value = TRUE))
                 )
               )
             ),
@@ -332,32 +332,32 @@ ui <- page_navbar(
               condition = "input.selected_plot_type == 'heatmap'",
               radioButtons(
                 "heatmap_scale",
-                "Ölçekleme (Scale):",
-                choices = c("Row Z-Score (Standart)" = "row", "Ham Log2 Değerleri" = "none"),
+                "Data Scaling:",
+                choices = c("Row Z-Score (Standard)" = "row", "Raw Log2 Abundances" = "none"),
                 selected = "row",
                 inline = TRUE
               ),
               fluidRow(
-                column(6, checkboxInput("heatmap_cluster_rows", "Proteinleri Kümele (Cluster Rows)", value = TRUE)),
-                column(6, checkboxInput("heatmap_cluster_cols", "Örnekleri Kümele (Cluster Cols)", value = FALSE))
+                column(6, checkboxInput("heatmap_cluster_rows", "Cluster Rows (Proteins)", value = TRUE)),
+                column(6, checkboxInput("heatmap_cluster_cols", "Cluster Columns (Samples)", value = FALSE))
               ),
               fluidRow(
-                column(6, checkboxInput("heatmap_show_rownames", "Gen İsimlerini Göster", value = TRUE)),
-                column(6, checkboxInput("heatmap_show_colnames", "Örnek İsimlerini Göster", value = TRUE))
+                column(6, checkboxInput("heatmap_show_rownames", "Show Gene / Protein Names", value = TRUE)),
+                column(6, checkboxInput("heatmap_show_colnames", "Show Sample Names", value = TRUE))
               ),
               selectInput(
                 "heatmap_color_palette",
-                "Isı Haritası Renk Paleti:",
+                "Heatmap Color Palette:",
                 choices = c(
-                  "🔵⚪🔴 Mavi - Beyaz - Kırmızı (RdBu / NPG)" = "RdBu",
-                  "🔵🔴 Mavi - Kırmızı (BWR)" = "bwr",
-                  "🟢🟡 Viridis" = "viridis",
-                  "🟣🟠 Plasma" = "plasma",
-                  "⚫🟣 Magma" = "magma"
+                  "Blue - White - Red (RdBu / NPG)" = "RdBu",
+                  "Blue - Red (BWR)" = "bwr",
+                  "Viridis" = "viridis",
+                  "Plasma" = "plasma",
+                  "Magma" = "magma"
                 ),
                 selected = "RdBu"
               ),
-              sliderInput("heatmap_top_n", "Maksimum Gösterilecek Protein (0 = Tümü):", min = 0, max = 200, value = 50, step = 10)
+              sliderInput("heatmap_top_n", "Maximum Proteins to Display (0 = All):", min = 0, max = 200, value = 50, step = 10)
             ),
 
             # Sub-controls for Sample Grouping & Manual Naming (Shared by Profile Plot & Heatmap)
@@ -367,22 +367,22 @@ ui <- page_navbar(
                 style = "background-color: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; border: 1px solid #dee2e6;",
                 div(
                   class = "d-flex align-items-center justify-content-between mb-2",
-                  tags$b("👥 Örnek Gruplandırma (Sample Groups):"),
+                  tags$b("👥 Sample Grouping:"),
                   uiOutput("design_status_badge")
                 ),
                 radioButtons(
                   "group_mode_select",
                   label = NULL,
                   choices = c(
-                    "🤖 Otomatik / Design Dosyası" = "auto",
-                    "✏️ Grup İsimlerini Manuel Düzenle" = "manual"
+                    "Automatic / Design File" = "auto",
+                    "Manual Group Editing" = "manual"
                   ),
                   selected = "auto",
                   inline = TRUE
                 ),
                 conditionalPanel(
                   condition = "input.group_mode_select == 'manual'",
-                  helpText("Algılanan gruplara istediğiniz biyolojik isimleri verin:"),
+                  helpText("Assign custom biological names to detected groups:"),
                   uiOutput("manual_group_inputs_ui")
                 )
               )
@@ -394,17 +394,17 @@ ui <- page_navbar(
               sliderInput("tf_top_n", "Top N TFs per Regulation Group:", min = 5, max = 30, value = 15, step = 1),
               radioButtons("tf_orientation", "Orientation:", choices = c("Horizontal" = "horizontal", "Vertical" = "vertical"), inline = TRUE),
               div(style = "background-color: #f8f9fa; padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px solid #e9ecef;",
-                tags$b("🔍 TF Filtreleme:"),
+                tags$b("🔍 TF Filtering:"),
                 radioButtons(
                   "tf_filter_mode",
                   label = NULL,
                   choices = c(
-                    "❌ Seçilenleri Çıkar (Exclude)" = "exclude",
-                    "🎯 Sadece Seçilenleri Göster (Include)" = "include"
+                    "❌ Exclude Selected TFs" = "exclude",
+                    "🎯 Include Selected TFs Only" = "include"
                   ),
                   selected = "exclude"
                 ),
-                selectizeInput("tf_selected_tfs", label = NULL, choices = NULL, multiple = TRUE, options = list(placeholder = "Çıkarmak istediğiniz TF'leri seçin..."))
+                selectizeInput("tf_selected_tfs", label = NULL, choices = NULL, multiple = TRUE, options = list(placeholder = "Search and select TFs to filter..."))
               )
             )
           ),
@@ -764,9 +764,9 @@ server <- function(input, output, session) {
     grps <- detected_sample_groups()
     n_grps <- length(unique(grps))
     if (!is.null(des)) {
-      span(class = "badge bg-success", title = "Tasarım dosyasından otomatik eşlendi", paste0("✓ design.txt (", n_grps, " Grup)"))
+      span(class = "badge bg-success", title = "Automatically mapped from design file", paste0("✓ design.txt (", n_grps, " Groups)"))
     } else {
-      span(class = "badge bg-info", title = "Örnek adlarından algılandı", paste0("ℹ Prefix (", n_grps, " Grup)"))
+      span(class = "badge bg-info", title = "Inferred from sample name prefixes", paste0("ℹ Prefix (", n_grps, " Groups)"))
     }
   })
 
@@ -782,7 +782,7 @@ server <- function(input, output, session) {
       members_str <- paste(members, collapse = ", ")
       textInput(
         inputId = paste0("custom_grp_name_", i),
-        label = paste0("Grup ", i, " (Örnekler: ", members_str, "):"),
+        label = paste0("Group ", i, " (Samples: ", members_str, "):"),
         value = grp_id
       )
     })
@@ -791,7 +791,7 @@ server <- function(input, output, session) {
       inputs,
       textAreaInput(
         "manual_group_csv",
-        "Veya Tüm Grupları Sırayla Gir (Virgülle):",
+        "Or Enter All Group Names in Order (Comma-separated):",
         value = paste(grps, collapse = ", "),
         rows = 2
       )
@@ -1251,7 +1251,7 @@ server <- function(input, output, session) {
         class = "mb-3 p-2 bg-light rounded border d-flex gap-3 align-items-center",
         span(class = "badge bg-danger p-2 fs-6", style = "font-weight: 700;", paste("🔴 Activated Pathways (NES > 0):", n_act)),
         span(class = "badge bg-primary p-2 fs-6", style = "font-weight: 700;", paste("🔵 Suppressed Pathways (NES < 0):", n_supp)),
-        span(class = "text-muted ms-auto", style = "font-size: 0.85rem;", "Tablonun ilk sütunu regülasyon durumunu (Status) gösterir.")
+        span(class = "text-muted ms-auto", style = "font-size: 0.85rem;", "The first column indicates regulation Status.")
       )
     } else if (ptype %in% c("tf_bar", "tf_lollipop") && "score" %in% colnames(df)) {
       n_act <- sum(df$score > 0, na.rm = TRUE)
@@ -1275,7 +1275,7 @@ server <- function(input, output, session) {
         span(class = "badge bg-danger p-2 fs-6", style = "font-weight: 700;", paste("🔴 Enriched / Up (logFC ≥", fc_cut, "):", n_up)),
         span(class = "badge bg-primary p-2 fs-6", style = "font-weight: 700;", paste("🔵 Reduced / Down (logFC ≤ -", fc_cut, "):", n_down)),
         span(class = "badge bg-secondary p-2 fs-6", style = "font-weight: 700;", paste("⚪ Not Significant:", n_ns)),
-        span(class = "text-muted ms-auto", style = "font-size: 0.85rem;", paste("Filtre: |logFC| ≥", fc_cut, "& P ≤", p_cut))
+        span(class = "text-muted ms-auto", style = "font-size: 0.85rem;", paste("Filter: |logFC| ≥", fc_cut, "& P ≤", p_cut))
       )
     } else if (ptype == "heatmap") {
       dea_df <- standardize_dea_df(df)
@@ -1284,10 +1284,10 @@ server <- function(input, output, session) {
       n_grps <- if (!is.null(grps)) length(unique(grps)) else 0
       div(
         class = "mb-3 p-2 bg-light rounded border d-flex gap-3 align-items-center",
-        span(class = "badge bg-danger p-2 fs-6", style = "font-weight: 700;", paste("🔥 Toplam Protein:", nrow(dea_df))),
-        span(class = "badge bg-primary p-2 fs-6", style = "font-weight: 700;", paste("🧪 Örnek Sayısı:", length(s_cols))),
-        span(class = "badge bg-success p-2 fs-6", style = "font-weight: 700;", paste("👥 Grup Sayısı:", n_grps)),
-        if ("Comparison" %in% colnames(dea_df) && !is.na(dea_df$Comparison[1])) span(class = "badge bg-secondary p-2 fs-6", style = "font-weight: 700;", paste("⚖️ Karşılaştırma:", dea_df$Comparison[1])) else NULL
+        span(class = "badge bg-danger p-2 fs-6", style = "font-weight: 700;", paste("Total Proteins:", nrow(dea_df))),
+        span(class = "badge bg-primary p-2 fs-6", style = "font-weight: 700;", paste("Number of Samples:", length(s_cols))),
+        span(class = "badge bg-success p-2 fs-6", style = "font-weight: 700;", paste("Number of Groups:", n_grps)),
+        if ("Comparison" %in% colnames(dea_df) && !is.na(dea_df$Comparison[1])) span(class = "badge bg-secondary p-2 fs-6", style = "font-weight: 700;", paste("Comparison:", dea_df$Comparison[1])) else NULL
       )
     } else {
       NULL
